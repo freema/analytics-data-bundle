@@ -1,0 +1,26 @@
+# Configuration for GA4 Analytics Data Bundle
+# Documentation: https://github.com/freema/ga4-analytics-data-bundle
+
+ga4_analytics_data:
+    clients:
+        default:
+            # Your Google Analytics 4 property ID
+            property_id: '%env(ANALYTICS_PROPERTY_ID)%'
+            
+            # Path to your Google service account credentials JSON file
+            service_account_credentials_json: '%env(ANALYTICS_CREDENTIALS_PATH)%'
+            
+            # Cache configuration
+            cache:
+                enabled: true                  # Enable/disable caching
+                lifetime_in_minutes: 1440      # 24 hours cache lifetime
+                
+            # Optional proxy configuration
+            # proxy: '%env(default::ANALYTICS_PROXY)%'
+            # no_proxy: []
+            
+    # The default client to use when none is specified
+    default_client: 'default'
+    
+    # Enable/disable the Symfony profiler integration
+    profiler: '%kernel.debug%'
