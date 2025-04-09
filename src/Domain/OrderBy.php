@@ -12,32 +12,32 @@ class OrderBy
 {
     public const ASCENDING = 'asc';
     public const DESCENDING = 'desc';
-    
+
     private string $name;
     private bool $isMetric;
     private string $direction;
-    
+
     private function __construct(string $name, bool $isMetric, string $direction)
     {
         $this->name = $name;
         $this->isMetric = $isMetric;
         $this->direction = $direction;
     }
-    
+
     public static function metric(string $metricName, string $direction = self::DESCENDING): self
     {
         return new self($metricName, true, $direction);
     }
-    
+
     public static function dimension(string $dimensionName, string $direction = self::ASCENDING): self
     {
         return new self($dimensionName, false, $direction);
     }
-    
+
     public function toGoogleOrderBy(): GoogleOrderBy
     {
         $orderBy = new GoogleOrderBy();
-        
+
         if ($this->isMetric) {
             $metricOrderBy = new MetricOrderBy();
             $metricOrderBy->setMetricName($this->name);
@@ -47,22 +47,22 @@ class OrderBy
             $dimensionOrderBy->setDimensionName($this->name);
             $orderBy->setDimension($dimensionOrderBy);
         }
-        
-        $orderBy->setDesc($this->direction === self::DESCENDING);
-        
+
+        $orderBy->setDesc(self::DESCENDING === $this->direction);
+
         return $orderBy;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function isMetric(): bool
     {
         return $this->isMetric;
     }
-    
+
     public function getDirection(): string
     {
         return $this->direction;

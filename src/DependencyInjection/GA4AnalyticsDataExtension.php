@@ -9,8 +9,8 @@ use Freema\GA4AnalyticsDataBundle\Analytics\AnalyticsClientInterface;
 use Freema\GA4AnalyticsDataBundle\Cache\AnalyticsCache;
 use Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry;
 use Freema\GA4AnalyticsDataBundle\DataCollector\AnalyticsDataCollector;
-use Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface;
 use Freema\GA4AnalyticsDataBundle\Http\GoogleAnalyticsClientFactory;
+use Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface;
 use Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,11 +26,11 @@ class GA4AnalyticsDataExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
         $this->registerClients($config, $container);
-        
+
         // Conditionally disable the data collector
         if (!$config['profiler']) {
             $container->removeDefinition(AnalyticsDataCollector::class);
@@ -40,7 +40,7 @@ class GA4AnalyticsDataExtension extends Extension
     private function registerClients(array $config, ContainerBuilder $container): void
     {
         $registryDefinition = $container->getDefinition(AnalyticsRegistry::class);
-        
+
         foreach ($config['clients'] as $name => $clientConfig) {
             // Create cache service for this client
             $cacheDefinition = new Definition(AnalyticsCache::class, [
@@ -50,19 +50,19 @@ class GA4AnalyticsDataExtension extends Extension
             ]);
             $cacheServiceId = sprintf('ga4_analytics_data.cache.%s', $name);
             $container->setDefinition($cacheServiceId, $cacheDefinition);
-            
+
             // Create processor instance
             $processorServiceId = sprintf('ga4_analytics_data.processor.%s', $name);
             $processorDefinition = new Definition(ReportProcessor::class);
             $container->setDefinition($processorServiceId, $processorDefinition);
-            
+
             // Create Google Analytics client factory
             $factoryServiceId = sprintf('ga4_analytics_data.client_factory.%s', $name);
             $factoryDefinition = new Definition(GoogleAnalyticsClientFactory::class, [
                 '$httpClientFactory' => new Reference(HttpClientFactoryInterface::class),
             ]);
             $container->setDefinition($factoryServiceId, $factoryDefinition);
-            
+
             // Prepare client with configured cache
             $clientDefinition = new Definition(AnalyticsClient::class, [
                 '$clientFactory' => new Reference($factoryServiceId),
@@ -70,7 +70,7 @@ class GA4AnalyticsDataExtension extends Extension
                 '$cache' => new Reference($cacheServiceId),
                 '$processor' => new Reference($processorServiceId),
             ]);
-            
+
             $clientDefinition->setPublic(true);
             $clientServiceId = sprintf('ga4_analytics_data.client.%s', $name);
             $container->setDefinition($clientServiceId, $clientDefinition);
@@ -85,7 +85,7 @@ class GA4AnalyticsDataExtension extends Extension
         // Configure default client if set
         if (isset($config['default_client'])) {
             $container->setParameter('ga4_analytics_data.default_client', $config['default_client']);
-            
+
             // Set default client as the main AnalyticsClientInterface
             $defaultClientServiceId = sprintf('ga4_analytics_data.client.%s', $config['default_client']);
             $container->setAlias(AnalyticsClientInterface::class, $defaultClientServiceId);

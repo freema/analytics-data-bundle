@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Freema\GA4AnalyticsDataBundle\Exception;
 
-use RuntimeException;
-
-class ClientConfigKeyDontExistException extends RuntimeException
+class ClientConfigKeyDontExistException extends \RuntimeException
 {
     public static function create(string $key): self
     {

@@ -1,7 +1,11 @@
 parameters:
-    level: 5
+    level: max
     paths:
         - src
     excludePaths:
-        - src/Resources
-    checkMissingIterableValueType: false
+        - tests
+        - src/DependencyInjection/
+        - src/GA4AnalyticsDataBundle.php
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue

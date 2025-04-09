@@ -12,7 +12,6 @@ interface HttpClientFactoryInterface
      * Create a new Google Analytics Data API client.
      *
      * @param array $config Client configuration
-     * @return BetaAnalyticsDataClient
      */
     public function createClient(array $config): BetaAnalyticsDataClient;
 }

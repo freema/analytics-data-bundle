@@ -10,11 +10,11 @@ class AnalyticsReport
     private array $metrics = [];
     private array $rows = [];
     private int $totalRows = 0;
-    
+
     /**
      * @param array $dimensions List of dimension headers
-     * @param array $metrics List of metric headers
-     * @param array $rows Report data rows
+     * @param array $metrics    List of metric headers
+     * @param array $rows       Report data rows
      */
     public function __construct(array $dimensions, array $metrics, array $rows)
     {
@@ -23,7 +23,7 @@ class AnalyticsReport
         $this->rows = $rows;
         $this->totalRows = count($rows);
     }
-    
+
     /**
      * Get the list of dimension headers.
      */
@@ -31,7 +31,7 @@ class AnalyticsReport
     {
         return $this->dimensions;
     }
-    
+
     /**
      * Get the list of metric headers.
      */
@@ -39,7 +39,7 @@ class AnalyticsReport
     {
         return $this->metrics;
     }
-    
+
     /**
      * Get the report rows.
      */
@@ -47,7 +47,7 @@ class AnalyticsReport
     {
         return $this->rows;
     }
-    
+
     /**
      * Get the total number of rows.
      */
@@ -55,7 +55,7 @@ class AnalyticsReport
     {
         return $this->totalRows;
     }
-    
+
     /**
      * Get the rows as a simple array for easier handling.
      */
@@ -63,7 +63,7 @@ class AnalyticsReport
     {
         return $this->rows;
     }
-    
+
     /**
      * Get a row by index.
      */
@@ -71,7 +71,7 @@ class AnalyticsReport
     {
         return $this->rows[$index] ?? null;
     }
-    
+
     /**
      * Get the first row or null if no rows.
      */
@@ -79,7 +79,7 @@ class AnalyticsReport
     {
         return $this->totalRows > 0 ? $this->rows[0] : null;
     }
-    
+
     /**
      * Check if the report has any rows.
      */
@@ -87,25 +87,27 @@ class AnalyticsReport
     {
         return $this->totalRows > 0;
     }
-    
+
     /**
      * Get a single metric value from the first row or null if not found.
      */
     public function getMetricValue(string $metricName): mixed
     {
         $firstRow = $this->getFirstRow();
+
         return $firstRow[$metricName] ?? null;
     }
-    
+
     /**
      * Get a single dimension value from the first row or null if not found.
      */
     public function getDimensionValue(string $dimensionName): ?string
     {
         $firstRow = $this->getFirstRow();
+
         return $firstRow[$dimensionName] ?? null;
     }
-    
+
     /**
      * Extract a specific column from all rows.
      */

@@ -11,17 +11,17 @@ class AnalyticsCache
     private CacheItemPoolInterface $cache;
     private int $lifetime;
     private bool $enabled;
-    
+
     public function __construct(
         CacheItemPoolInterface $cache,
         int $lifetime = 86400, // Default to 24 hours
-        bool $enabled = true
+        bool $enabled = true,
     ) {
         $this->cache = $cache;
         $this->lifetime = $lifetime;
         $this->enabled = $enabled;
     }
-    
+
     /**
      * Get item from cache or compute it with the callback.
      */
@@ -31,23 +31,23 @@ class AnalyticsCache
         if (!$this->enabled) {
             return $callback();
         }
-        
+
         $item = $this->cache->getItem($key);
-        
+
         if ($item->isHit()) {
             return $item->get();
         }
-        
+
         $value = $callback();
-        
+
         $item->set($value);
         $item->expiresAfter($this->lifetime);
-        
+
         $this->cache->save($item);
-        
+
         return $value;
     }
-    
+
     /**
      * Clear a specific cache key.
      */
@@ -55,7 +55,7 @@ class AnalyticsCache
     {
         return $this->cache->deleteItem($key);
     }
-    
+
     /**
      * Clear all analytics cache.
      */
@@ -63,7 +63,7 @@ class AnalyticsCache
     {
         return $this->cache->clear();
     }
-    
+
     /**
      * Enable or disable caching.
      */
@@ -71,7 +71,7 @@ class AnalyticsCache
     {
         $this->enabled = $enabled;
     }
-    
+
     /**
      * Check if caching is enabled.
      */
@@ -79,7 +79,7 @@ class AnalyticsCache
     {
         return $this->enabled;
     }
-    
+
     /**
      * Set cache lifetime.
      */
@@ -87,7 +87,7 @@ class AnalyticsCache
     {
         $this->lifetime = $lifetime;
     }
-    
+
     /**
      * Get current cache lifetime.
      */
