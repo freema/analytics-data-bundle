@@ -10,16 +10,17 @@ Install the bundle using Composer:
 composer require freema/ga4-analytics-data-bundle
 ```
 
-## Requirements
+The bundle uses [Symfony Flex](https://symfony.com/doc/current/setup/flex.html), so it will automatically:
+- Enable the bundle in `config/bundles.php` 
+- Create the configuration file `config/packages/ga4_analytics_data.yaml`
+- Add environment variables to your `.env` file
+- Add the credentials file path to your `.gitignore`
 
-- PHP 8.1+
-- Symfony 5.4|6.4|7.1
-- Google Analytics 4 Property
-- Service Account credentials with access to the GA4 property
+### Manual Installation (Without Flex)
 
-## Configuration
+If you're not using Symfony Flex, you need to:
 
-Register the bundle in your `config/bundles.php`:
+1. Register the bundle in your `config/bundles.php`:
 
 ```php
 return [
@@ -28,7 +29,7 @@ return [
 ];
 ```
 
-Create the configuration file at `config/packages/ga4_analytics_data.yaml`:
+2. Create the configuration file at `config/packages/ga4_analytics_data.yaml`:
 
 ```yaml
 ga4_analytics_data:
@@ -39,26 +40,35 @@ ga4_analytics_data:
             cache:
                 enabled: true                   # Enable/disable caching
                 lifetime_in_minutes: 1440       # 24 hours cache lifetime
-                prefix: 'ga4_analytics_data'    # Cache key prefix
             # Optional proxy configuration
             proxy: '%env(default::ANALYTICS_PROXY)%' 
             no_proxy: []
         # You can define multiple clients with different properties
-        another_property:
-            property_id: '%env(ANOTHER_ANALYTICS_PROPERTY_ID)%'
-            service_account_credentials_json: '%env(ANOTHER_ANALYTICS_CREDENTIALS_PATH)%'
+        # another_property:
+        #     property_id: '%env(ANOTHER_ANALYTICS_PROPERTY_ID)%'
+        #     service_account_credentials_json: '%env(ANOTHER_ANALYTICS_CREDENTIALS_PATH)%'
     # The default client to use when none is specified
     default_client: 'default'
     # Enable/disable the Symfony profiler integration
-    profiler: true
+    profiler: '%kernel.debug%'
 ```
 
-Make sure to add the required environment variables or replace with actual values:
+3. Add the required environment variables to your `.env` file:
 
 ```
+###> freema/ga4-analytics-data-bundle ###
 ANALYTICS_PROPERTY_ID=123456789
-ANALYTICS_CREDENTIALS_PATH=/path/to/credentials.json
+ANALYTICS_CREDENTIALS_PATH=%kernel.project_dir%/config/analytics-credentials.json
+# ANALYTICS_PROXY=http://proxy.example.com:8080
+###< freema/ga4-analytics-data-bundle ###
 ```
+
+## Requirements
+
+- PHP 8.1+
+- Symfony 5.4|6.4|7.1
+- Google Analytics 4 Property
+- Service Account credentials with access to the GA4 property
 
 ## Usage
 

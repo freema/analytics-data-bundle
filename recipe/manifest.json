@@ -1,0 +1,16 @@
+{
+    "bundles": {
+        "Freema\\GA4AnalyticsDataBundle\\GA4AnalyticsDataBundle": ["all"]
+    },
+    "copy-from-recipe": {
+        "config/": "%CONFIG_DIR%/",
+        ".env": ".env"
+    },
+    "env": {
+        "ANALYTICS_PROPERTY_ID": "",
+        "ANALYTICS_CREDENTIALS_PATH": "%kernel.project_dir%/config/analytics-credentials.json"
+    },
+    "gitignore": [
+        "/config/analytics-credentials.json"
+    ]
+}
