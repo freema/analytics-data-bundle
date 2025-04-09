@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+  install:
+    desc: Install dependencies
+    cmds:
+      - composer install
+
+  phpstan:
+    desc: Run PHPStan
+    cmds:
+      - vendor/bin/phpstan analyse
+
+  cs:
+    desc: Check code style
+    cmds:
+      - vendor/bin/php-cs-fixer fix --dry-run --diff
+
+  cs-fix:
+    desc: Fix code style
+    cmds:
+      - vendor/bin/php-cs-fixer fix
+
+  tests:
+    desc: Run tests
+    cmds:
+      - vendor/bin/phpunit
+
+  dev:
+    desc: Start development server
+    cmds:
+      - docker-compose up
+
+  symfony-54:
+    desc: Test with Symfony 5.4
+    cmds:
+      - cd test/symfony54 && composer update
+
+  symfony-64:
+    desc: Test with Symfony 6.4
+    cmds:
+      - cd test/symfony64 && composer update
+
+  symfony-71:
+    desc: Test with Symfony 7.1
+    cmds:
+      - cd test/symfony71 && composer update
+
+  all-tests:
+    desc: Run all checks
+    cmds:
+      - task: phpstan
+      - task: cs
+      - task: tests

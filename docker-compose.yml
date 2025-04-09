@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: dev/docker/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=1
+      - ANALYTICS_PROPERTY_ID=
+      - ANALYTICS_CREDENTIALS_PATH=
+      - PHP_IDE_CONFIG=serverName=localhost
+    command: >
+      bash -c "cd /app && composer install && php -S 0.0.0.0:8080 -t dev/"

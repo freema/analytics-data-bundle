@@ -1,0 +1,14 @@
+{
+    "name": "test/symfony64-compatibility",
+    "description": "Test compatibility with Symfony 6.4",
+    "require": {
+        "php": ">=8.1",
+        "symfony/http-kernel": "^6.4",
+        "symfony/dependency-injection": "^6.4",
+        "symfony/framework-bundle": "^6.4",
+        "symfony/config": "^6.4",
+        "symfony/http-client": "^6.4",
+        "symfony/yaml": "^6.4",
+        "google/analytics-data": "^0.20.0"
+    }
+}

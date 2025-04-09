@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Error - GA4 Analytics Data Bundle Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h1>Error</h1>
+                <p class="lead">An error occurred while fetching analytics data</p>
+                <a href="{{ path('demo_index') }}" class="btn btn-sm btn-primary">Back to Home</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        Error Details
+                    </div>
+                    <div class="card-body">
+                        <p>{{ error }}</p>
+                        
+                        <h5 class="mt-4">Possible Causes</h5>
+                        <ul>
+                            <li>Missing or invalid service account credentials</li>
+                            <li>Missing or invalid property ID</li>
+                            <li>Service account does not have access to the GA4 property</li>
+                            <li>API quota exceeded</li>
+                            <li>Network connection issues</li>
+                        </ul>
+                        
+                        <h5 class="mt-4">Troubleshooting Steps</h5>
+                        <ol>
+                            <li>Check that your environment variables are correctly set:
+                                <ul>
+                                    <li><code>ANALYTICS_PROPERTY_ID</code></li>
+                                    <li><code>ANALYTICS_CREDENTIALS_PATH</code></li>
+                                </ul>
+                            </li>
+                            <li>Verify that the credentials file exists and is accessible</li>
+                            <li>Make sure the service account has at least "Viewer" access to the GA4 property</li>
+                            <li>Check that the Google Analytics Data API is enabled in your Google Cloud project</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
