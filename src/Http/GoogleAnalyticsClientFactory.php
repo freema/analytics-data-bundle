@@ -8,15 +8,18 @@ use Freema\GA4AnalyticsDataBundle\Exception\AnalyticsException;
 use Freema\GA4AnalyticsDataBundle\Exception\CredentialsException;
 use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 use GuzzleHttp\Utils;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
  * Factory for creating Google Analytics Data API clients.
  */
-class GoogleAnalyticsClientFactory
+class GoogleAnalyticsClientFactory implements LoggerAwareInterface
 {
-    private LoggerInterface $logger;
+    use LoggerAwareTrait;
+    
     private HttpClientFactoryInterface $httpClientFactory;
     
     public function __construct(

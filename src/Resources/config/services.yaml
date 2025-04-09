@@ -3,7 +3,10 @@ services:
         autowire: true
         autoconfigure: true
         public: false
+        bind:
+            $logger: '@logger'
 
+    # Register all services from the bundle
     Freema\GA4AnalyticsDataBundle\:
         resource: '../../*'
         exclude: '../../{Entity,Migrations,Tests,Kernel.php,Resources,Domain,Response}'
