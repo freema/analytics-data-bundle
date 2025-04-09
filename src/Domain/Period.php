@@ -12,7 +12,7 @@ class Period
     public \DateTimeInterface $startDate;
     public \DateTimeInterface $endDate;
 
-    public static function create(\DateTimeInterface $startDate, \DateTimeInterface $endDate): self
+    public static function create(\DateTimeInterface $startDate, \DateTimeInterface $endDate): static
     {
         return new static($startDate, $endDate);
     }

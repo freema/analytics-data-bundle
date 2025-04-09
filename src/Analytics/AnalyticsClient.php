@@ -103,7 +103,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 // Process the response
                 return $this->processor->processMostViewedPagesReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('Failed to get most viewed pages', [
+                $this->logger?->error('Failed to get most viewed pages', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -131,7 +131,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 // If we have any rows, order exists in GA
                 return $response->getRowCount() > 0;
             } catch (\Exception $e) {
-                $this->logger->error('GA transaction check failed', [
+                $this->logger?->error('GA transaction check failed', [
                     'transaction_id' => $transactionId,
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
@@ -156,7 +156,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $this->processor->processTransactionsReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('GA transactions fetch failed', [
+                $this->logger?->error('GA transactions fetch failed', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -207,7 +207,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('Failed to get visitors and page views', [
+                $this->logger?->error('Failed to get visitors and page views', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -260,7 +260,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $result;
             } catch (\Exception $e) {
-                $this->logger->error('Failed to get total visitors and page views', [
+                $this->logger?->error('Failed to get total visitors and page views', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -319,7 +319,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('Failed to get top landing pages', [
+                $this->logger?->error('Failed to get top landing pages', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -372,7 +372,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('Failed to get top exit pages', [
+                $this->logger?->error('Failed to get top exit pages', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -391,7 +391,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
         }
 
         // Create a unique cache key based on all parameters
-        $cacheKey = 'custom_report_'.md5(json_encode([
+        $cacheKeyData = [
             'dimensions' => $dimensions,
             'metrics' => $metrics,
             'period' => [
@@ -399,7 +399,16 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 'end' => $period->endDate->format('Ymd'),
             ],
             'options' => $options,
-        ]));
+        ];
+
+        $jsonData = json_encode($cacheKeyData);
+        if (false === $jsonData) {
+            $jsonData = json_encode([
+                'error' => 'Failed to encode cache key data',
+                'hash' => hash('sha256', serialize($cacheKeyData)),
+            ]);
+        }
+        $cacheKey = 'custom_report_'.md5($jsonData);
 
         $report = $this->cache->get($cacheKey, function () use ($dimensions, $metrics, $period, $options) {
             try {
@@ -456,7 +465,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
-                $this->logger->error('Failed to run custom report', [
+                $this->logger?->error('Failed to run custom report', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                     'dimensions' => $dimensions,

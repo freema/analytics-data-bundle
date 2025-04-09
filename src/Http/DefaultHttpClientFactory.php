@@ -23,6 +23,10 @@ class DefaultHttpClientFactory implements HttpClientFactoryInterface, LoggerAwar
 
     public function createClient(array $config): BetaAnalyticsDataClient
     {
+        if (!isset($config['service_account_credentials_json'])) {
+            throw new \InvalidArgumentException('Missing required configuration key: service_account_credentials_json');
+        }
+
         $credentialsPath = $config['service_account_credentials_json'];
 
         // Handle relative paths

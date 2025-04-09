@@ -25,7 +25,7 @@ class AnalyticsCache
     /**
      * Get item from cache or compute it with the callback.
      */
-    public function get(string $key, callable $callback)
+    public function get(string $key, callable $callback): mixed
     {
         // If caching is disabled, just call the callback directly
         if (!$this->enabled) {

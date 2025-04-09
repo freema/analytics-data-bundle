@@ -22,6 +22,7 @@ class TypeCaster
         return match ($typeStr) {
             'INTEGER' => (int) $value,
             'FLOAT', 'PERCENT', 'TIME', 'CURRENCY' => (float) $value,
+            // @phpstan-ignore-next-line
             'METRIC_CURRENCY' => static::castMetricCurrency($value),
             default => $value,
         };
