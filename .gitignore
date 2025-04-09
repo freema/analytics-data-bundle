@@ -1,0 +1,14 @@
+/vendor/
+/composer.lock
+/.php-cs-fixer.cache
+/.phpunit.cache/
+/.phpunit.result.cache
+/.idea/
+/node_modules/
+/dev/cache/
+/dev/var/
+/dev/.env
+/dev/sessions/
+/dev/ssh/*
+!/dev/ssh/sample-credentials.json
+/old/

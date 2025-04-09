@@ -1,0 +1,14 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    excludePaths:
+        - tests
+        - src/DependencyInjection/
+        - src/GA4AnalyticsDataBundle.php
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            message: '#Unsafe usage of new static\(\)\.#'
+            path: src/Domain/Period.php

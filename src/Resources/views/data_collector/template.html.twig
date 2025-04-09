@@ -1,0 +1,100 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"></path>
+                <path d="M18 20V4"></path>
+                <path d="M6 20v-4"></path>
+            </svg>
+        </span>
+        <span class="sf-toolbar-value">{{ collector.clientCount }}</span>
+        <span class="sf-toolbar-label">GA4 Clients</span>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-piece">
+            <b>GA4 Analytics Clients</b>
+            <span class="sf-toolbar-status">{{ collector.clientCount }}</span>
+        </div>
+        {% for clientName in collector.clientNames %}
+            <div class="sf-toolbar-info-piece">
+                <b>{{ clientName }}</b>
+                <span>
+                    Property ID: {{ collector.getConfig(clientName).property_id }}
+                </span>
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { 'link': profiler_url }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label {{ collector.clientCount == 0 ? 'disabled' }}">
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"></path>
+                <path d="M18 20V4"></path>
+                <path d="M6 20v-4"></path>
+            </svg>
+        </span>
+        <strong>GA4 Analytics</strong>
+        <span class="count">
+            <span>{{ collector.clientCount }}</span>
+        </span>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>GA4 Analytics Data</h2>
+    
+    {% if collector.clientCount == 0 %}
+        <div class="empty">
+            <p>No GA4 Analytics clients configured.</p>
+        </div>
+    {% else %}
+        <div class="metrics">
+            <div class="metric">
+                <span class="value">{{ collector.clientCount }}</span>
+                <span class="label">Registered Clients</span>
+            </div>
+        </div>
+        
+        <h3>Client Configurations</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Property ID</th>
+                    <th>Cache</th>
+                    <th>Proxy</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for clientName, config in collector.clientConfigs %}
+                    <tr>
+                        <td>{{ clientName }}</td>
+                        <td>{{ config.property_id }}</td>
+                        <td>
+                            {% if config.cache_enabled %}
+                                <span class="badge">Enabled</span>
+                                <span class="badge">{{ config.cache_lifetime }} min</span>
+                            {% else %}
+                                <span class="badge badge-danger">Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if config.proxy_enabled %}
+                                <span class="badge">Enabled</span>
+                            {% else %}
+                                <span class="badge badge-warning">Disabled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        bind:
+            $logger: '@logger'
+
+    # Register all services from the bundle
+    Freema\GA4AnalyticsDataBundle\:
+        resource: '../../*'
+        exclude: '../../{Entity,Migrations,Tests,Kernel.php,Resources,Domain,Response}'
+
+    # Registry service
+    Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry:
+        public: true
+        arguments: []
+
+    Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistryInterface:
+        alias: Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry
+        public: true
+
+    # HTTP Client Factory
+    Freema\GA4AnalyticsDataBundle\Http\DefaultHttpClientFactory:
+        public: false
+
+    Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface:
+        alias: Freema\GA4AnalyticsDataBundle\Http\DefaultHttpClientFactory
+        public: false
+        
+    # Report Processor
+    Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor:
+        public: false
+        
+    # Caching
+    Freema\GA4AnalyticsDataBundle\Cache\AnalyticsCache:
+        arguments:
+            $cache: '@cache.app'
+            
+    # Data Collector (conditionally loaded in extension)
+    Freema\GA4AnalyticsDataBundle\DataCollector\AnalyticsDataCollector:
+        arguments:
+            $analyticsRegistry: '@Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistryInterface'
+        tags:
+            - { name: 'data_collector', template: '@GA4AnalyticsData/data_collector/template.html.twig', id: 'ga4_analytics_data.collector', priority: 200 }

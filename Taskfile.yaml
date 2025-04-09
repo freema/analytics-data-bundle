@@ -1,0 +1,86 @@
+version: '3'
+
+vars:
+  DOCKER_PHP: docker-compose exec php
+  DOCKER_RUN: docker-compose run --rm php
+
+tasks:
+  docker-up:
+    desc: Start docker containers
+    cmds:
+      - docker-compose up -d
+
+  docker-down:
+    desc: Stop docker containers
+    cmds:
+      - docker-compose down
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - '{{.DOCKER_RUN}} composer install'
+
+  phpstan:
+    desc: Run PHPStan
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} php -d memory_limit=512M vendor/bin/phpstan analyse'
+    aliases:
+      - stan
+
+  cs:
+    desc: Check code style
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} vendor/bin/php-cs-fixer fix --dry-run --diff'
+
+  cs-fix:
+    desc: Fix code style
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} vendor/bin/php-cs-fixer fix'
+    aliases:
+      - fixer
+
+  tests:
+    desc: Run tests
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} vendor/bin/phpunit'
+
+  dev:
+    desc: Start development server
+    cmds:
+      - docker-compose up
+
+  shell:
+    desc: Start a shell in the PHP container
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} bash'
+
+  symfony-54:
+    desc: Test with Symfony 5.4
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} bash -c "cd test/symfony54 && composer update"'
+
+  symfony-64:
+    desc: Test with Symfony 6.4
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} bash -c "cd test/symfony64 && composer update"'
+
+  symfony-71:
+    desc: Test with Symfony 7.1
+    deps: [docker-up]
+    cmds:
+      - '{{.DOCKER_PHP}} bash -c "cd test/symfony71 && composer update"'
+
+  all-tests:
+    desc: Run all checks
+    deps: [docker-up]
+    cmds:
+      - task: phpstan
+      - task: cs
+      - task: tests
