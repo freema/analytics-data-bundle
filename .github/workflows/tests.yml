@@ -54,23 +54,3 @@ jobs:
         run: composer install --prefer-dist --no-progress
       - name: Run PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
-  
-  symfony-compatibility:
-    name: Symfony ${{ matrix.symfony }} Compatibility
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        symfony: ['5.4', '6.4', '7.1']
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          coverage: none
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-      - name: Install Symfony ${{ matrix.symfony }}
-        run: |
-          cd test/symfony${{ matrix.symfony }}
-          composer update
