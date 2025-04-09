@@ -8,10 +8,10 @@ use Freema\GA4AnalyticsDataBundle\Cache\AnalyticsCache;
 use Freema\GA4AnalyticsDataBundle\Domain\OrderBy;
 use Freema\GA4AnalyticsDataBundle\Domain\Period;
 use Freema\GA4AnalyticsDataBundle\Exception\AnalyticsException;
-use Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface;
+use Freema\GA4AnalyticsDataBundle\Http\GoogleAnalyticsClientFactory;
 use Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor;
 use Freema\GA4AnalyticsDataBundle\Response\AnalyticsReport;
-use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
+use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Dimension;
 use Google\Analytics\Data\V1beta\Filter;
@@ -30,13 +30,14 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
     
-    private BetaAnalyticsDataClient $analyticsClient;
+    private ?BetaAnalyticsDataClient $analyticsClient = null;
     private array $config;
     private AnalyticsCache $cache;
     private ReportProcessor $processor;
+    private GoogleAnalyticsClientFactory $clientFactory;
     
     public function __construct(
-        HttpClientFactoryInterface $client,
+        GoogleAnalyticsClientFactory $clientFactory,
         array $config,
         AnalyticsCache $cache,
         ReportProcessor $processor,
@@ -44,9 +45,21 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
     ) {
         $this->logger = $logger ?? new NullLogger();
         $this->config = $config;
-        $this->analyticsClient = $client->createClient($config);
+        $this->clientFactory = $clientFactory;
         $this->cache = $cache;
         $this->processor = $processor;
+    }
+    
+    /**
+     * Get the analytics client, creating it if it doesn't exist yet.
+     */
+    private function getAnalyticsClient(): BetaAnalyticsDataClient
+    {
+        if ($this->analyticsClient === null) {
+            $this->analyticsClient = $this->clientFactory->createAnalyticsClient($this->config);
+        }
+        
+        return $this->analyticsClient;
     }
     
     public function getMostViewedPages(?Period $period = null, int $limit = 20): array
@@ -86,7 +99,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 $request->setLimit($limit);
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 // Process the response
                 return $this->processor->processMostViewedPagesReport($response);
@@ -191,7 +204,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 }
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
@@ -232,7 +245,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 $request->setDateRanges([$period->toDateRange()]);
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 $result = $this->processor->processReport($response);
                 
@@ -303,7 +316,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 $request->setLimit($limit);
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
@@ -356,7 +369,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 $request->setLimit($limit);
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
@@ -440,7 +453,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
                 }
                 
                 // Run the report
-                $response = $this->analyticsClient->runReport($request);
+                $response = $this->getAnalyticsClient()->runReport($request);
                 
                 return $this->processor->processReport($response);
             } catch (\Exception $e) {
@@ -519,7 +532,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
         $request->setDimensionFilter($andFilterExpression);
         
         // Run the report
-        return $this->analyticsClient->runReport($request);
+        return $this->getAnalyticsClient()->runReport($request);
     }
     
     /**
@@ -560,7 +573,7 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
         $request->setDimensionFilter($filterExpression);
         
         // Run the report
-        return $this->analyticsClient->runReport($request);
+        return $this->getAnalyticsClient()->runReport($request);
     }
     
     /**

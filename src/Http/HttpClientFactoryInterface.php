@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Freema\GA4AnalyticsDataBundle\Http;
 
-use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
+use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 
 interface HttpClientFactoryInterface
 {

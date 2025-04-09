@@ -3,6 +3,7 @@
     "description": "Test compatibility with Symfony 5.4",
     "require": {
         "php": ">=8.1",
+        "ext-bcmath": "*",
         "symfony/http-kernel": "^5.4",
         "symfony/dependency-injection": "^5.4",
         "symfony/framework-bundle": "^5.4",

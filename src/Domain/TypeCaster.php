@@ -6,9 +6,19 @@ namespace Freema\GA4AnalyticsDataBundle\Domain;
 
 class TypeCaster
 {
-    public static function castValue(string $value, string $type): mixed
+    /**
+     * Cast a value to the appropriate type based on Google Analytics metric type.
+     *
+     * @param string $value The value to cast
+     * @param string|int|mixed $type The Google Analytics metric type
+     * @return mixed The cast value
+     */
+    public static function castValue(string $value, mixed $type): mixed
     {
-        return match ($type) {
+        // If the type is not a string (e.g., it's an integer enum value), convert to string
+        $typeStr = is_string($type) ? $type : (string) $type;
+        
+        return match ($typeStr) {
             'INTEGER' => (int) $value,
             'FLOAT', 'PERCENT', 'TIME', 'CURRENCY' => (float) $value,
             'METRIC_CURRENCY' => static::castMetricCurrency($value),

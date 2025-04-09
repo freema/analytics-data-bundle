@@ -190,6 +190,8 @@ This can be disabled by setting `profiler: false` in the bundle config.
 
 ## Getting Google Analytics 4 Credentials
 
+### Creating Service Account Credentials
+
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
 3. Enable the "Google Analytics Data API" for your project
@@ -198,6 +200,64 @@ This can be disabled by setting `profiler: false` in the bundle config.
 6. Download the JSON key file for the service account
 7. In Google Analytics, go to Admin > Property > Property Access Management
 8. Add the service account email with "Viewer" permissions
+
+### Credentials File Format
+
+The service account credentials file should be a JSON file with the following structure:
+
+```json
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "key-id",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nPrivate key content\n-----END PRIVATE KEY-----\n",
+  "client_email": "your-service-account@your-project.iam.gserviceaccount.com",
+  "client_id": "client-id",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-service-account%40your-project.iam.gserviceaccount.com"
+}
+```
+
+### Security Best Practices
+
+1. **Store credentials securely**: Keep the JSON file in a secure location, outside of your web root
+2. **Use environment variables**: Reference the path to the credentials file using environment variables
+3. **Restrict permissions**: Set appropriate file permissions to limit access to the credentials file
+4. **Environment-specific paths**: Use different paths for different environments (dev, staging, prod)
+
+```yaml
+# config/packages/ga4_analytics_data.yaml
+ga4_analytics_data:
+    clients:
+        default:
+            service_account_credentials_json: '%env(ANALYTICS_CREDENTIALS_PATH)%'
+```
+
+```
+# .env
+ANALYTICS_CREDENTIALS_PATH=/secure/path/to/credentials.json
+
+# .env.local (development)
+ANALYTICS_CREDENTIALS_PATH=config/credentials/analytics-dev.json
+```
+
+### Error Handling
+
+The bundle validates the credentials file and provides clear error messages for common issues:
+
+- File not found or unreadable 
+- Invalid JSON format
+- Missing required fields
+- Incorrect service account format
+
+If you encounter credential errors, check:
+
+1. That the file exists at the specified path
+2. That the file has proper read permissions
+3. That the file contains valid JSON with all required fields
+4. That the service account has access to the Google Analytics property
 
 ## License
 

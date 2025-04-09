@@ -10,6 +10,7 @@ use Freema\GA4AnalyticsDataBundle\Cache\AnalyticsCache;
 use Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry;
 use Freema\GA4AnalyticsDataBundle\DataCollector\AnalyticsDataCollector;
 use Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface;
+use Freema\GA4AnalyticsDataBundle\Http\GoogleAnalyticsClientFactory;
 use Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -55,9 +56,16 @@ class GA4AnalyticsDataExtension extends Extension
             $processorDefinition = new Definition(ReportProcessor::class);
             $container->setDefinition($processorServiceId, $processorDefinition);
             
+            // Create Google Analytics client factory
+            $factoryServiceId = sprintf('ga4_analytics_data.client_factory.%s', $name);
+            $factoryDefinition = new Definition(GoogleAnalyticsClientFactory::class, [
+                '$httpClientFactory' => new Reference(HttpClientFactoryInterface::class),
+            ]);
+            $container->setDefinition($factoryServiceId, $factoryDefinition);
+            
             // Prepare client with configured cache
             $clientDefinition = new Definition(AnalyticsClient::class, [
-                '$client' => new Reference(HttpClientFactoryInterface::class),
+                '$clientFactory' => new Reference($factoryServiceId),
                 '$config' => $clientConfig,
                 '$cache' => new Reference($cacheServiceId),
                 '$processor' => new Reference($processorServiceId),

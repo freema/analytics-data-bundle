@@ -6,6 +6,7 @@ namespace Freema\GA4AnalyticsDataBundle\Dev;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
@@ -25,9 +26,19 @@ class DevKernel extends Kernel
         ];
     }
 
+    public function getCacheDir(): string
+    {
+        return $this->getProjectDir().'/dev/var/cache/'.$this->environment;
+    }
+    
+    public function getLogDir(): string
+    {
+        return $this->getProjectDir().'/dev/var/log';
+    }
+
     protected function configureContainer(ContainerConfigurator $container): void
     {
-        $container->import('../config/services.yaml');
+        $container->import(__DIR__ . '/config/services.yaml');
         
         $container->extension('framework', [
             'secret' => 'test',
@@ -56,16 +67,21 @@ class DevKernel extends Kernel
                 'default' => [
                     'property_id' => '%env(ANALYTICS_PROPERTY_ID)%',
                     'service_account_credentials_json' => '%env(ANALYTICS_CREDENTIALS_PATH)%',
-                    'cache_lifetime_in_minutes' => 1440,
+                    'cache' => [
+                        'enabled' => true,
+                        'lifetime_in_minutes' => 1440,
+                        'prefix' => 'ga4_analytics_data'
+                    ],
                 ],
             ],
             'default_client' => 'default',
+            'profiler' => true,
         ]);
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import('../config/routes.yaml');
+        $routes->import(__DIR__ . '/config/routes.yaml');
         
         $routes->import('@WebProfilerBundle/Resources/config/routing/wdt.xml')
             ->prefix('/_wdt');

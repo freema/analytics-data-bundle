@@ -40,8 +40,12 @@ class ReportProcessor
             $rows[] = $result;
         }
         
-        $dimensions = array_map(fn($header) => $header->getName(), $dimensionHeaders->getIterator()->getArrayCopy());
-        $metrics = array_map(fn($header) => $header->getName(), $metricHeaders->getIterator()->getArrayCopy());
+        // Convert iterator to array properly
+        $dimensionHeadersArray = iterator_to_array($dimensionHeaders->getIterator());
+        $metricHeadersArray = iterator_to_array($metricHeaders->getIterator());
+        
+        $dimensions = array_map(fn($header) => $header->getName(), $dimensionHeadersArray);
+        $metrics = array_map(fn($header) => $header->getName(), $metricHeadersArray);
         
         return new AnalyticsReport($dimensions, $metrics, $rows);
     }
