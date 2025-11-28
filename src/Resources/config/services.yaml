@@ -20,13 +20,26 @@ services:
         alias: Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry
         public: true
 
-    # HTTP Client Factory
+    # HTTP Client Factories
     Freema\GA4AnalyticsDataBundle\Http\DefaultHttpClientFactory:
         public: false
 
     Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface:
         alias: Freema\GA4AnalyticsDataBundle\Http\DefaultHttpClientFactory
         public: false
+
+    # Admin Client Factory
+    Freema\GA4AnalyticsDataBundle\Http\GoogleAdminClientFactory:
+        public: false
+
+    # Admin Registry
+    Freema\GA4AnalyticsDataBundle\Client\AdminRegistry:
+        public: true
+        arguments: []
+
+    Freema\GA4AnalyticsDataBundle\Client\AdminRegistryInterface:
+        alias: Freema\GA4AnalyticsDataBundle\Client\AdminRegistry
+        public: true
         
     # Report Processor
     Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor:
