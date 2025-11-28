@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Freema\GA4AnalyticsDataBundle\DependencyInjection;
 
+use Freema\GA4AnalyticsDataBundle\Admin\AdminClient;
+use Freema\GA4AnalyticsDataBundle\Admin\AdminClientInterface;
 use Freema\GA4AnalyticsDataBundle\Analytics\AnalyticsClient;
 use Freema\GA4AnalyticsDataBundle\Analytics\AnalyticsClientInterface;
 use Freema\GA4AnalyticsDataBundle\Cache\AnalyticsCache;
+use Freema\GA4AnalyticsDataBundle\Client\AdminRegistry;
 use Freema\GA4AnalyticsDataBundle\Client\AnalyticsRegistry;
 use Freema\GA4AnalyticsDataBundle\DataCollector\AnalyticsDataCollector;
+use Freema\GA4AnalyticsDataBundle\Http\GoogleAdminClientFactory;
 use Freema\GA4AnalyticsDataBundle\Http\GoogleAnalyticsClientFactory;
 use Freema\GA4AnalyticsDataBundle\Http\HttpClientFactoryInterface;
 use Freema\GA4AnalyticsDataBundle\Processor\ReportProcessor;
@@ -40,6 +44,7 @@ class GA4AnalyticsDataExtension extends Extension
     private function registerClients(array $config, ContainerBuilder $container): void
     {
         $registryDefinition = $container->getDefinition(AnalyticsRegistry::class);
+        $adminRegistryDefinition = $container->getDefinition(AdminRegistry::class);
 
         foreach ($config['clients'] as $name => $clientConfig) {
             // Create cache service for this client
@@ -80,6 +85,28 @@ class GA4AnalyticsDataExtension extends Extension
 
             // Tag the client for autowiring
             $clientDefinition->addTag('ga4_analytics_data.client', ['key' => $name]);
+
+            // Create Admin API client factory
+            $adminFactoryServiceId = sprintf('ga4_analytics_data.admin_client_factory.%s', $name);
+            $adminFactoryDefinition = new Definition(GoogleAdminClientFactory::class);
+            $container->setDefinition($adminFactoryServiceId, $adminFactoryDefinition);
+
+            // Create Admin API client
+            $adminClientDefinition = new Definition(AdminClient::class, [
+                '$clientFactory' => new Reference($adminFactoryServiceId),
+                '$config' => $clientConfig,
+                '$cache' => new Reference($cacheServiceId),
+            ]);
+
+            $adminClientDefinition->setPublic(true);
+            $adminClientServiceId = sprintf('ga4_analytics_data.admin_client.%s', $name);
+            $container->setDefinition($adminClientServiceId, $adminClientDefinition);
+
+            // Add admin client to registry
+            $adminRegistryDefinition->addMethodCall('addClient', [$name, new Reference($adminClientServiceId)]);
+
+            // Tag the admin client for autowiring
+            $adminClientDefinition->addTag('ga4_analytics_data.admin_client', ['key' => $name]);
         }
 
         // Configure default client if set
@@ -89,6 +116,10 @@ class GA4AnalyticsDataExtension extends Extension
             // Set default client as the main AnalyticsClientInterface
             $defaultClientServiceId = sprintf('ga4_analytics_data.client.%s', $config['default_client']);
             $container->setAlias(AnalyticsClientInterface::class, $defaultClientServiceId);
+
+            // Set default admin client as the main AdminClientInterface
+            $defaultAdminClientServiceId = sprintf('ga4_analytics_data.admin_client.%s', $config['default_client']);
+            $container->setAlias(AdminClientInterface::class, $defaultAdminClientServiceId);
         }
     }
 }
