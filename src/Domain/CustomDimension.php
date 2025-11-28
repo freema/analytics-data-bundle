@@ -33,11 +33,11 @@ final class CustomDimension
     /**
      * Create a new custom dimension definition.
      *
-     * @param string              $parameterName             The event parameter name (e.g., 'button_name')
-     * @param string              $displayName               Human-readable name shown in GA4 UI
-     * @param DimensionScope      $scope                     The scope of the dimension
-     * @param string|null         $description               Optional description
-     * @param bool                $disallowAdsPersonalization Whether to exclude from ads personalization
+     * @param string         $parameterName              The event parameter name (e.g., 'button_name')
+     * @param string         $displayName                Human-readable name shown in GA4 UI
+     * @param DimensionScope $scope                      The scope of the dimension
+     * @param string|null    $description                Optional description
+     * @param bool           $disallowAdsPersonalization Whether to exclude from ads personalization
      *
      * @throws ValidationException If validation fails
      */
@@ -51,10 +51,7 @@ final class CustomDimension
         $errors = self::validate($parameterName, $displayName, $description);
 
         if (!empty($errors)) {
-            throw new ValidationException(
-                'Custom dimension validation failed: '.implode('; ', $errors),
-                $errors
-            );
+            throw new ValidationException('Custom dimension validation failed: '.implode('; ', $errors), $errors);
         }
 
         return new self(

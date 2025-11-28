@@ -86,12 +86,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
                     'property_id' => $this->getPropertyId(),
                 ]);
 
-                throw new AdminApiException(
-                    'Failed to list custom dimensions: '.$e->getMessage(),
-                    $this->getPropertyId(),
-                    0,
-                    $e
-                );
+                throw new AdminApiException('Failed to list custom dimensions: '.$e->getMessage(), $this->getPropertyId(), 0, $e);
             }
         });
     }
@@ -116,10 +111,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
     {
         // Check if already exists
         if ($this->customDimensionExists($dimension->parameterName)) {
-            throw new DimensionAlreadyExistsException(
-                $dimension->parameterName,
-                $this->getPropertyId()
-            );
+            throw new DimensionAlreadyExistsException($dimension->parameterName, $this->getPropertyId());
         }
 
         try {
@@ -149,12 +141,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
                 'property_id' => $this->getPropertyId(),
             ]);
 
-            throw new AdminApiException(
-                sprintf('Failed to create custom dimension "%s": %s', $dimension->parameterName, $e->getMessage()),
-                $this->getPropertyId(),
-                0,
-                $e
-            );
+            throw new AdminApiException(sprintf('Failed to create custom dimension "%s": %s', $dimension->parameterName, $e->getMessage()), $this->getPropertyId(), 0, $e);
         }
     }
 
@@ -286,12 +273,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
                 'property_id' => $this->getPropertyId(),
             ]);
 
-            throw new AdminApiException(
-                sprintf('Failed to update custom dimension "%s": %s', $parameterName, $e->getMessage()),
-                $this->getPropertyId(),
-                0,
-                $e
-            );
+            throw new AdminApiException(sprintf('Failed to update custom dimension "%s": %s', $parameterName, $e->getMessage()), $this->getPropertyId(), 0, $e);
         }
     }
 
@@ -323,12 +305,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
                 'property_id' => $this->getPropertyId(),
             ]);
 
-            throw new AdminApiException(
-                sprintf('Failed to archive custom dimension "%s": %s', $parameterName, $e->getMessage()),
-                $this->getPropertyId(),
-                0,
-                $e
-            );
+            throw new AdminApiException(sprintf('Failed to archive custom dimension "%s": %s', $parameterName, $e->getMessage()), $this->getPropertyId(), 0, $e);
         }
     }
 
@@ -447,12 +424,7 @@ class AdminClient implements AdminClientInterface, LoggerAwareInterface
                     'property_id' => $this->getPropertyId(),
                 ]);
 
-                throw new AdminApiException(
-                    'Failed to list custom metrics: '.$e->getMessage(),
-                    $this->getPropertyId(),
-                    0,
-                    $e
-                );
+                throw new AdminApiException('Failed to list custom metrics: '.$e->getMessage(), $this->getPropertyId(), 0, $e);
             }
         });
     }

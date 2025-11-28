@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Freema\GA4AnalyticsDataBundle\Admin;
 
 use Freema\GA4AnalyticsDataBundle\Domain\CustomDimension;
-use Freema\GA4AnalyticsDataBundle\Domain\DimensionScope;
 
 /**
  * Interface for GA4 Admin API operations.

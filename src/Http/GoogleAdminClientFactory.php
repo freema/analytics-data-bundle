@@ -149,12 +149,7 @@ class GoogleAdminClientFactory implements LoggerAwareInterface
             $this->logger->error('Failed to create Google Analytics Admin API client', [
                 'error' => $e->getMessage(),
             ]);
-            throw new AdminApiException(
-                'Failed to initialize Google Analytics Admin API client: '.$e->getMessage(),
-                $config['property_id'] ?? null,
-                0,
-                $e
-            );
+            throw new AdminApiException('Failed to initialize Google Analytics Admin API client: '.$e->getMessage(), $config['property_id'] ?? null, 0, $e);
         }
     }
 }

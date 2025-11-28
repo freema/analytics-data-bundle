@@ -13,19 +13,19 @@ enum DimensionScope: string
 {
     /**
      * Event-level dimension. Captured with each event.
-     * Example: button_name, page_section, video_title
+     * Example: button_name, page_section, video_title.
      */
     case EVENT = 'EVENT';
 
     /**
      * User-level dimension. Persists across sessions for a user.
-     * Example: membership_tier, customer_type, preferred_language
+     * Example: membership_tier, customer_type, preferred_language.
      */
     case USER = 'USER';
 
     /**
      * Item-level dimension. Used for e-commerce item properties.
-     * Example: item_category, item_brand, item_variant
+     * Example: item_category, item_brand, item_variant.
      */
     case ITEM = 'ITEM';
 
@@ -69,11 +69,7 @@ enum DimensionScope: string
         $scope = self::tryFrom($value);
 
         if (null === $scope) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid scope "%s". Valid values: %s',
-                $value,
-                implode(', ', self::values())
-            ));
+            throw new \InvalidArgumentException(sprintf('Invalid scope "%s". Valid values: %s', $value, implode(', ', self::values())));
         }
 
         return $scope;
