@@ -10,15 +10,7 @@ Install the bundle using Composer:
 composer require freema/ga4-analytics-data-bundle
 ```
 
-The bundle uses [Symfony Flex](https://symfony.com/doc/current/setup/flex.html), so it will automatically:
-- Enable the bundle in `config/bundles.php` 
-- Create the configuration file `config/packages/ga4_analytics_data.yaml`
-- Add environment variables to your `.env` file
-- Add the credentials file path to your `.gitignore`
-
-### Manual Installation (Without Flex)
-
-If you're not using Symfony Flex, you need to:
+There is no published Symfony Flex recipe for the bundle yet, so set it up by hand:
 
 1. Register the bundle in your `config/bundles.php`:
 
