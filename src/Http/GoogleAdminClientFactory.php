@@ -112,13 +112,7 @@ class GoogleAdminClientFactory implements LoggerAwareInterface
                                 $options['no_proxy'] = implode(',', $config['no_proxy']);
                             }
 
-                            // Try to use the newer Utils::chooseHandler method if available,
-                            // otherwise fall back to the deprecated choose_handler function
-                            if (method_exists(Utils::class, 'chooseHandler')) {
-                                $handler = Utils::chooseHandler();
-                            } else {
-                                $handler = \GuzzleHttp\choose_handler();
-                            }
+                            $handler = Utils::chooseHandler();
 
                             return $handler($request, $options);
                         },
