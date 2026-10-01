@@ -31,7 +31,6 @@ class AnalyticsDataCollector extends DataCollector
 
             if ($reflectionClass->hasProperty('config')) {
                 $configProperty = $reflectionClass->getProperty('config');
-                $configProperty->setAccessible(true);
                 $config = $configProperty->getValue($client);
 
                 // Filter out sensitive data
