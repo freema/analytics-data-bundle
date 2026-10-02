@@ -1,24 +1,18 @@
-# GA4 Analytics Data Bundle Recipe
+# Symfony Flex recipe
 
-This directory contains the [Symfony Flex](https://symfony.com/doc/current/setup/flex.html) recipe for automatically configuring the GA4 Analytics Data Bundle when it's installed in a Symfony project.
+This directory holds the [Symfony Flex](https://symfony.com/doc/current/setup/flex.html)
+recipe for `freema/ga4-analytics-data-bundle`, as it would be submitted to
+[symfony/recipes-contrib](https://github.com/symfony/recipes-contrib) under
+`freema/ga4-analytics-data-bundle/1.0/`. It is not published yet, so Flex does
+not apply it; until it is, follow the manual setup in the main README.
 
-## What This Recipe Does
+Once published, `composer require freema/ga4-analytics-data-bundle` will:
 
-When the `freema/ga4-analytics-data-bundle` package is installed in a Symfony Flex project, this recipe will:
+1. Register the bundle in `config/bundles.php`
+2. Create `config/packages/ga4_analytics_data.yaml` with one `default` client
+3. Add `ANALYTICS_PROPERTY_ID` and `ANALYTICS_CREDENTIALS_PATH` to `.env`
+4. Add `config/analytics-credentials.json` to `.gitignore`
 
-1. Register the bundle in your `config/bundles.php` file
-2. Create the `config/packages/ga4_analytics_data.yaml` configuration file with default settings
-3. Add the necessary environment variables to your `.env` file
-4. Add the credentials file path to your `.gitignore` to prevent accidental commits
-
-## After Installation
-
-After installing the bundle, you'll need to:
-
-1. Create or obtain a Google Service Account credentials JSON file
-2. Place the credentials file in your project (default location: `config/analytics-credentials.json`)
-3. Set your Analytics Property ID in the `.env` file or `.env.local` file
-
-## Documentation
-
-For full documentation on how to use the bundle, please see the main README file in the repository root.
+`ANALYTICS_CREDENTIALS_PATH` defaults to
+`%kernel.project_dir%/config/analytics-credentials.json`; the config reads it
+with the `resolve:` env var processor, which replaces `%kernel.project_dir%`.

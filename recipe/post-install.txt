@@ -1,0 +1,8 @@
+  <bg=blue;fg=white>GA4 Analytics Data Bundle is installed.</> Before the first query:
+
+  * Set <comment>ANALYTICS_PROPERTY_ID</comment> in <comment>.env.local</comment>.
+
+  * Create a JSON key for a Google Cloud service account, add the service
+    account as a Viewer of the GA4 property and save the key as
+    <comment>%CONFIG_DIR%/analytics-credentials.json</comment> (git ignores it), or point
+    <comment>ANALYTICS_CREDENTIALS_PATH</comment> elsewhere.
