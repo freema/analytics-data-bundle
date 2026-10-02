@@ -1,5 +1,7 @@
 parameters:
     level: 6
+    # Public methods check PHPDoc-typed input at runtime on purpose
+    treatPhpDocTypesAsCertain: false
     paths:
         - src
     excludePaths:
