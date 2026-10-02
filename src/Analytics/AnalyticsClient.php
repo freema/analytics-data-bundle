@@ -124,22 +124,24 @@ class AnalyticsClient implements AnalyticsClientInterface, LoggerAwareInterface
 
         $cacheKey = 'transaction_'.$transactionId.'_'.$period->startDate->format('Ymd').'_'.$period->endDate->format('Ymd');
 
-        return $this->cache->get($cacheKey, function () use ($transactionId, $period) {
-            try {
+        try {
+            // The exception leaves the closure, so a failed check is not
+            // cached: it would answer false for the whole cache lifetime.
+            return $this->cache->get($cacheKey, function () use ($transactionId, $period) {
                 $response = $this->runTransactionIdReport($transactionId, $period);
 
                 // If we have any rows, order exists in GA
                 return $response->getRowCount() > 0;
-            } catch (\Exception $e) {
-                $this->logger?->error('GA transaction check failed', [
-                    'transaction_id' => $transactionId,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
+            });
+        } catch (\Exception $e) {
+            $this->logger?->error('GA transaction check failed', [
+                'transaction_id' => $transactionId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-                return false;
-            }
-        });
+            return false;
+        }
     }
 
     public function getTransactions(?Period $period = null): array
