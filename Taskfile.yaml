@@ -59,23 +59,46 @@ tasks:
     cmds:
       - '{{.DOCKER_PHP}} bash'
 
-  symfony-54:
-    desc: Test with Symfony 5.4
-    deps: [docker-up]
+  # Same install as the test matrix in .github/workflows/ci.yml: Symfony Flex
+  # restricts symfony/* packages to SYMFONY_REQUIRE. Runs in a throwaway
+  # container on a copy of the repository, so vendor/ is left alone.
+  test:symfony:
+    desc: 'Test against one Symfony version, e.g. task test:symfony PHP=8.3 SYMFONY=7.4.*'
+    vars:
+      PHP: '{{.PHP | default "8.1"}}'
+      SYMFONY: '{{.SYMFONY | default "5.4.*"}}'
     cmds:
-      - '{{.DOCKER_PHP}} bash -c "cd test/symfony54 && composer update"'
+      - docker build --quiet --build-arg PHP_VERSION={{.PHP}} --tag ga4-analytics-data-bundle-test:php{{.PHP}} dev/docker
+      - |
+        docker run --rm \
+          --volume "{{.ROOT_DIR}}:/app:ro" \
+          --volume ga4-analytics-data-bundle-composer:/composer-cache \
+          --env COMPOSER_CACHE_DIR=/composer-cache \
+          --env SYMFONY_REQUIRE='{{.SYMFONY}}' \
+          ga4-analytics-data-bundle-test:php{{.PHP}} bash -c '
+            set -e
+            mkdir /tmp/bundle
+            tar -C /app --exclude=./.git --exclude=./vendor --exclude=./composer.lock -cf - . | tar -C /tmp/bundle -xf -
+            composer global config --no-plugins allow-plugins.symfony/flex true
+            composer global require --quiet --no-interaction symfony/flex
+            cd /tmp/bundle
+            composer update --no-interaction --no-progress --prefer-dist
+            vendor/bin/phpunit
+          '
 
-  symfony-64:
-    desc: Test with Symfony 6.4
-    deps: [docker-up]
+  test:symfony:all:
+    desc: Test every PHP and Symfony pair CI tests
     cmds:
-      - '{{.DOCKER_PHP}} bash -c "cd test/symfony64 && composer update"'
-
-  symfony-71:
-    desc: Test with Symfony 7.1
-    deps: [docker-up]
-    cmds:
-      - '{{.DOCKER_PHP}} bash -c "cd test/symfony71 && composer update"'
+      - task: test:symfony
+        vars: { PHP: '8.1', SYMFONY: '5.4.*' }
+      - task: test:symfony
+        vars: { PHP: '8.2', SYMFONY: '6.4.*' }
+      - task: test:symfony
+        vars: { PHP: '8.3', SYMFONY: '7.4.*' }
+      - task: test:symfony
+        vars: { PHP: '8.4', SYMFONY: '7.4.*' }
+      - task: test:symfony
+        vars: { PHP: '8.5', SYMFONY: '7.4.*' }
 
   all-tests:
     desc: Run all checks

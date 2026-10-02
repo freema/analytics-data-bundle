@@ -74,23 +74,27 @@ docker-compose exec php composer phpstan
 docker-compose exec php composer cs-fix
 ```
 
-Or using Taskfile:
+Or using [Task](https://taskfile.dev) on the host:
 
 ```bash
-docker-compose exec php vendor/bin/task tests
-docker-compose exec php vendor/bin/task cs
-docker-compose exec php vendor/bin/task phpstan
-docker-compose exec php vendor/bin/task cs-fix
+task tests
+task cs
+task phpstan
+task cs-fix
 ```
 
 ### Testing with Different Symfony Versions
 
-The bundle supports Symfony 5.4, 6.4, and 7.1. You can test compatibility with these versions:
+The bundle supports Symfony 5.4, 6.4 and 7.x. CI picks the Symfony version with
+Symfony Flex (`SYMFONY_REQUIRE`); the Taskfile does the same in a throwaway
+container, on a copy of the repository:
 
 ```bash
-docker-compose exec php vendor/bin/task symfony-54
-docker-compose exec php vendor/bin/task symfony-64
-docker-compose exec php vendor/bin/task symfony-71
+# One PHP and Symfony pair
+task test:symfony PHP=8.3 SYMFONY=7.4.*
+
+# Every pair CI tests (PHP 8.1 to 8.5)
+task test:symfony:all
 ```
 
 ## Development Environment Structure
