@@ -2,26 +2,28 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.cache"
          colors="true"
          executionOrder="random"
          failOnWarning="true"
          failOnRisky="true"
          failOnEmptyTestSuite="true"
-         beStrictAboutOutputDuringTests="true"
-         cacheResultFile=".phpunit.cache/test-results">
+         failOnDeprecation="true"
+         failOnNotice="true"
+         beStrictAboutOutputDuringTests="true">
     <testsuites>
         <testsuite name="GA4 Analytics Data Bundle Test Suite">
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
             <directory suffix=".php">src/</directory>
         </include>
         <exclude>
             <directory>src/Resources</directory>
         </exclude>
-    </coverage>
+    </source>
     <php>
         <env name="APP_ENV" value="test"/>
         <env name="ANALYTICS_PROPERTY_ID" value="123456789"/>

@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Freema\GA4AnalyticsDataBundle\Tests\Domain;
 
 use Freema\GA4AnalyticsDataBundle\Domain\TypeCaster;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TypeCasterTest extends TestCase
 {
-    /**
-     * @dataProvider provideTypeCases
-     */
+    #[DataProvider('provideTypeCases')]
     public function testCastValue(string $value, mixed $type, mixed $expected): void
     {
         $this->assertSame($expected, TypeCaster::castValue($value, $type));
     }
 
-    public function provideTypeCases(): array
+    /**
+     * @return array<string, array{string, string, mixed}>
+     */
+    public static function provideTypeCases(): array
     {
         return [
             'string value' => ['test', 'STRING', 'test'],
