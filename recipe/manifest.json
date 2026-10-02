@@ -3,14 +3,15 @@
         "Freema\\GA4AnalyticsDataBundle\\GA4AnalyticsDataBundle": ["all"]
     },
     "copy-from-recipe": {
-        "config/": "%CONFIG_DIR%/",
-        ".env": ".env"
+        "config/": "%CONFIG_DIR%/"
     },
     "env": {
+        "#1": "ID of the GA4 property to query, e.g. 123456789",
         "ANALYTICS_PROPERTY_ID": "",
-        "ANALYTICS_CREDENTIALS_PATH": "%kernel.project_dir%/config/analytics-credentials.json"
+        "#2": "JSON key of a Google Cloud service account that can read the property",
+        "ANALYTICS_CREDENTIALS_PATH": "%kernel.project_dir%/%CONFIG_DIR%/analytics-credentials.json"
     },
     "gitignore": [
-        "/config/analytics-credentials.json"
+        "/%CONFIG_DIR%/analytics-credentials.json"
     ]
 }

@@ -28,7 +28,8 @@ ga4_analytics_data:
     clients:
         default:
             property_id: '%env(ANALYTICS_PROPERTY_ID)%'
-            service_account_credentials_json: '%env(ANALYTICS_CREDENTIALS_PATH)%'
+            # resolve: replaces %kernel.project_dir% in the env var value
+            service_account_credentials_json: '%env(resolve:ANALYTICS_CREDENTIALS_PATH)%'
             cache:
                 enabled: true                   # Enable/disable caching
                 lifetime_in_minutes: 1440       # 24 hours cache lifetime
@@ -38,7 +39,7 @@ ga4_analytics_data:
         # You can define multiple clients with different properties
         # another_property:
         #     property_id: '%env(ANOTHER_ANALYTICS_PROPERTY_ID)%'
-        #     service_account_credentials_json: '%env(ANOTHER_ANALYTICS_CREDENTIALS_PATH)%'
+        #     service_account_credentials_json: '%env(resolve:ANOTHER_ANALYTICS_CREDENTIALS_PATH)%'
     # The default client to use when none is specified
     default_client: 'default'
     # Enable/disable the Symfony profiler integration
@@ -234,7 +235,7 @@ The service account credentials file should be a JSON file with the following st
 ga4_analytics_data:
     clients:
         default:
-            service_account_credentials_json: '%env(ANALYTICS_CREDENTIALS_PATH)%'
+            service_account_credentials_json: '%env(resolve:ANALYTICS_CREDENTIALS_PATH)%'
 ```
 
 ```
@@ -242,8 +243,11 @@ ga4_analytics_data:
 ANALYTICS_CREDENTIALS_PATH=/secure/path/to/credentials.json
 
 # .env.local (development)
-ANALYTICS_CREDENTIALS_PATH=config/credentials/analytics-dev.json
+ANALYTICS_CREDENTIALS_PATH=%kernel.project_dir%/config/credentials/analytics-dev.json
 ```
+
+A relative path is resolved against the current working directory, which is
+`public/` under PHP-FPM, so prefer absolute paths or `%kernel.project_dir%`.
 
 ### Error Handling
 
