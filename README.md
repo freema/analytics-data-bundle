@@ -33,6 +33,7 @@ ga4_analytics_data:
             cache:
                 enabled: true                   # Enable/disable caching
                 lifetime_in_minutes: 1440       # 24 hours cache lifetime
+                prefix: ga4_analytics_data      # Start of every cache key
             # Optional proxy configuration
             proxy: '%env(default::ANALYTICS_PROXY)%' 
             no_proxy: []
@@ -178,7 +179,10 @@ The bundle provides flexible caching options:
 
 - **Enable/Disable**: Set `enabled: true/false` in the cache config section
 - **Lifetime**: Configure with `lifetime_in_minutes` (defaults to 1440 = 24 hours)
-- **Custom Cache**: The bundle uses Symfony's cache system, so you can configure any PSR-6 cache adapter
+- **Prefix**: `prefix` (default `ga4_analytics_data`) starts every cache key
+- **Storage**: Entries live in Symfony's `cache.app` pool; choose its adapter under `framework.cache.app`
+- **Per property**: Each client's entries are scoped to its `property_id`, so clients reading different properties never share cached data. Failed API calls are not cached.
+- **Clearing**: `AnalyticsCache::clear()` drops one client's entries and leaves the rest of `cache.app` alone
 
 ### Symfony Web Profiler Integration
 

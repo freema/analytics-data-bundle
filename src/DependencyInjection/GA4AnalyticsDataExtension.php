@@ -47,11 +47,14 @@ class GA4AnalyticsDataExtension extends Extension
         $adminRegistryDefinition = $container->getDefinition(AdminRegistry::class);
 
         foreach ($config['clients'] as $name => $clientConfig) {
-            // Create cache service for this client
+            // Create cache service for this client. Clients share cache.app,
+            // so the keys are scoped to the property the client reads.
             $cacheDefinition = new Definition(AnalyticsCache::class, [
                 '$cache' => new Reference('cache.app'),
                 '$lifetime' => ($clientConfig['cache']['lifetime_in_minutes'] ?? 1440) * 60, // Convert to seconds
                 '$enabled' => $clientConfig['cache']['enabled'] ?? true,
+                '$namespace' => (string) $clientConfig['property_id'],
+                '$prefix' => $clientConfig['cache']['prefix'] ?? 'ga4_analytics_data',
             ]);
             $cacheServiceId = sprintf('ga4_analytics_data.cache.%s', $name);
             $container->setDefinition($cacheServiceId, $cacheDefinition);
